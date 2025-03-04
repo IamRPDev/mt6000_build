@@ -1,0 +1,36 @@
+name: Merge MT6000_cust_build into openwrt
+
+on:
+  workflow_dispatch:  # Manual trigger for the workflow
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout openwrt repository
+        uses: actions/checkout@v2
+        with:
+          repository: IamRPDev/openwrt  # Clone openwrt repository
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "RPDev"
+          git config --global user.email "dev@netlogin.xyz"
+
+      - name: Add MT6000_cust_build repository as a remote
+        run: |
+          git remote add mt6000_cust_build https://github.com/IamRPDev/MT6000_cust_build.git
+          git fetch mt6000_cust_build
+
+      - name: Merge MT6000_cust_build into openwrt
+        run: |
+          git checkout main  # Ensure you are on the main branch of openwrt
+          git merge mt6000_cust_build/main --allow-unrelated-histories -X theirs -m "Merge MT6000_cust_build into openwrt"
+
+      - name: Push changes to openwrt repository
+        run: |
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
