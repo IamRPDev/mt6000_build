@@ -1,35 +1,52 @@
-name: Merge MT6000_cust_build into openwrt
+name: Merge Repositories into Subdirectories
 
 on:
-  workflow_dispatch:  # Manual trigger for the workflow
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
-  merge:
+  merge_repos:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout openwrt repository
-        uses: actions/checkout@v2
+      - name: Checkout Target Repository
+        uses: actions/checkout@v3
         with:
-          repository: IamRPDev/openwrt  # Clone openwrt repository
+          repository: IamRPDev/mt6000_build
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Fetch all history for accurate merging
 
       - name: Set up Git
         run: |
-          git config --global user.name "RPDev"
-          git config --global user.email "dev@netlogin.xyz"
+          git config --global user.name "Your Name"
+          git config --global user.email "your-email@example.com"
 
-      - name: Add MT6000_cust_build repository as a remote
+      - name: Add and Fetch Source Repository 1 (openwrt)
         run: |
-          git remote add mt6000_cust_build https://github.com/IamRPDev/MT6000_cust_build.git
-          git fetch mt6000_cust_build
+          git remote add source1 https://github.com/IamRPDev/openwrt.git
+          git fetch source1
+          git checkout -b source1-branch source1/main
+          git filter-repo --to-subdirectory-filter openwrt
+          git checkout main
+          git merge --allow-unrelated-histories source1-branch -m "Merge openwrt into openwrt subdirectory"
 
-      - name: Merge MT6000_cust_build into openwrt
+      - name: Add and Fetch Source Repository 2 (MT6000_cust_build)
         run: |
-          git checkout main  # Ensure you are on the main branch of openwrt
-          git merge mt6000_cust_build/main --allow-unrelated-histories -X theirs -m "Merge MT6000_cust_build into openwrt"
+          git remote add source2 https://github.com/pesa1234/MT6000_cust_build.git
+          git fetch source2
+          git checkout -b source2-branch source2/main
+          git filter-repo --to-subdirectory-filter MT6000_cust_build
+          git checkout main
+          git merge --allow-unrelated-histories source2-branch -m "Merge MT6000_cust_build into MT6000_cust_build subdirectory"
 
-      - name: Push changes to openwrt repository
+      - name: Add and Fetch Source Repository 3 (luci-app-easymesh)
+        run: |
+          git remote add source3 https://github.com/torguardvpn/luci-app-easymesh.git
+          git fetch source3
+          git checkout -b source3-branch source3/main
+          git filter-repo --to-subdirectory-filter luci-app-easymesh
+          git checkout main
+          git merge --allow-unrelated-histories source3-branch -m "Merge luci-app-easymesh into luci-app-easymesh subdirectory"
+
+      - name: Push Merged Content to Target Repository
         run: |
           git push origin main
         env:
