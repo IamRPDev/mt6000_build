@@ -16,8 +16,8 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "your-email@example.com"
+          git config --global user.name "IamRPDev"
+          git config --global user.email "dev@netlogin.xyz"
 
       - name: Add and Fetch Source Repository 1 (openwrt)
         run: |
