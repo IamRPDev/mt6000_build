@@ -14,6 +14,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0  # Fetch all history for accurate merging
 
+      - name: Install git-filter-repo
+        run: |
+          sudo apt update
+          sudo apt install -y git-filter-repo
+
       - name: Set up Git
         run: |
           git config --global user.name "IamRPDev"
