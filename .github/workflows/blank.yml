@@ -31,7 +31,7 @@ jobs:
           git checkout -b openwrt-branch openwrt/main
           git filter-repo --to-subdirectory-filter openwrt
           git checkout main
-          git merge --allow-unrelated-histories openwrt-branch -m "Merge openwrt into openwrt subdirectory"
+          git merge --allow-unrelated-histories openwrt-branch -m "Merge openwrt into openwrt subdirectory" --force
 
       - name: Push Merged Content to Target Repository
         run: |
